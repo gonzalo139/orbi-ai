@@ -1,16 +1,13 @@
 from supabase import create_client
 from app.core.config import SUPABASE_URL, SUPABASE_KEY
-import anthropic
+from sentence_transformers import SentenceTransformer
 
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
-client = anthropic.Anthropic()
+model = SentenceTransformer('all-MiniLM-L6-v2')
 
 def get_embedding(text: str) -> list:
-    response = client.embeddings.create(
-        model="voyage-3",
-        input=text
-    )
-    return response.embeddings[0].embedding
+    embedding = model.encode(text)
+    return embedding.tolist()
 
 def search_documents(query: str, business_id: str, limit: int = 5) -> list:
     embedding = get_embedding(query)
@@ -22,3 +19,15 @@ def search_documents(query: str, business_id: str, limit: int = 5) -> list:
     }).execute()
     
     return result.data
+
+def ingest_text(text: str, business_id: str, metadata: dict = {}) -> None:
+    chunks = [text[i:i+500] for i in range(0, len(text), 500)]
+    
+    for chunk in chunks:
+        embedding = get_embedding(chunk)
+        supabase.table("documents").insert({
+            "business_id": business_id,
+            "content": chunk,
+            "embedding": embedding,
+            "metadata": metadata
+        }).execute()
