@@ -2,12 +2,17 @@ from fastapi import APIRouter
 from pydantic import BaseModel
 import anthropic
 from app.core.config import ANTHROPIC_API_KEY
+from app.rag.retriever import ingest_text, search_documents
 
 router = APIRouter()
 client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
 
 class ChatRequest(BaseModel):
     message: str
+    business_id: str = "demo"
+
+class IngestRequest(BaseModel):
+    text: str
     business_id: str = "demo"
 
 @router.post("/chat")
@@ -22,14 +27,7 @@ Si no sabés algo, lo decís honestamente.""",
             {"role": "user", "content": request.message}
         ]
     )
-    
     return {"response": response.content[0].text}
-
-from app.rag.retriever import ingest_text, search_documents
-
-class IngestRequest(BaseModel):
-    text: str
-    business_id: str = "demo"
 
 @router.post("/ingest")
 def ingest(request: IngestRequest):
