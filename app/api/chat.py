@@ -24,3 +24,14 @@ Si no sabés algo, lo decís honestamente.""",
     )
     
     return {"response": response.content[0].text}
+
+from app.rag.retriever import ingest_text, search_documents
+
+class IngestRequest(BaseModel):
+    text: str
+    business_id: str = "demo"
+
+@router.post("/ingest")
+def ingest(request: IngestRequest):
+    ingest_text(request.text, request.business_id)
+    return {"status": "ok", "message": "Texto ingresado correctamente"}
