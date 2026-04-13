@@ -17,12 +17,22 @@ class IngestRequest(BaseModel):
 
 @router.post("/chat")
 def chat(request: ChatRequest):
+    # Buscar contexto relevante en Supabase
+    docs = search_documents(request.message, request.business_id)
+    context = "\n".join([d["content"] for d in docs]) if docs else ""
+
+    system_prompt = f"""Sos Orbi, un asistente virtual inteligente para negocios.
+Respondés preguntas de clientes de forma amable, clara y concisa.
+Usá únicamente la información del negocio que te damos a continuación para responder.
+Si no encontrás la respuesta en esa información, decilo honestamente.
+
+Información del negocio:
+{context}"""
+
     response = client.messages.create(
         model="claude-sonnet-4-20250514",
         max_tokens=1024,
-        system="""Sos Orbi, un asistente virtual inteligente para negocios.
-Respondés preguntas de clientes de forma amable, clara y concisa.
-Si no sabés algo, lo decís honestamente.""",
+        system=system_prompt,
         messages=[
             {"role": "user", "content": request.message}
         ]
