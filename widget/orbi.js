@@ -1,6 +1,7 @@
 (function () {
   const ORBI_API = "https://orbi-ai-r41a.onrender.com";
   const BUSINESS_ID = window.ORBI_BUSINESS_ID || "demo";
+  let history = [];
 
   const styles = `
     #orbi-btn {
@@ -87,10 +88,19 @@
       const res = await fetch(`${ORBI_API}/api/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: text, business_id: BUSINESS_ID })
+        body: JSON.stringify({
+          message: text,
+          business_id: BUSINESS_ID,
+          history: history
+        })
       });
       const data = await res.json();
-      messages.lastChild.textContent = data.response;
+      const botReply = data.response;
+      messages.lastChild.textContent = botReply;
+
+      history.push({ role: "user", content: text });
+      history.push({ role: "assistant", content: botReply });
+
     } catch {
       messages.lastChild.textContent = "Error al conectar con Orbi.";
     }
