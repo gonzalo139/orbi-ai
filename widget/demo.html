@@ -2,18 +2,368 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Orbi Demo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>La Parrilla Don Carlos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
-    body { font-family: sans-serif; padding: 40px; background: #f5f5f5; }
-    h1 { color: #6C63FF; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --carbon: #1a1410;
+      --ember: #c0392b;
+      --ash: #8c7b6e;
+      --cream: #f5f0e8;
+      --smoke: #2e2520;
+      --gold: #c9a84c;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--carbon);
+      color: var(--cream);
+      font-weight: 300;
+    }
+
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      position: relative;
+      padding: 40px 24px;
+      background:
+        linear-gradient(to bottom, rgba(26,20,16,0.3) 0%, rgba(26,20,16,0.7) 60%, rgba(26,20,16,1) 100%),
+        url('https://images.unsplash.com/photo-1558030006-450675393462?w=1400&q=80') center/cover no-repeat;
+    }
+
+    .hero-eyebrow {
+      font-size: 11px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 24px;
+    }
+
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(48px, 8vw, 96px);
+      font-weight: 400;
+      line-height: 1.05;
+      margin-bottom: 8px;
+    }
+
+    .hero h1 em {
+      font-style: italic;
+      color: var(--gold);
+    }
+
+    .hero-sub {
+      font-size: 15px;
+      color: var(--ash);
+      margin-top: 20px;
+      letter-spacing: 0.5px;
+    }
+
+    .hero-divider {
+      width: 1px;
+      height: 60px;
+      background: var(--gold);
+      margin: 40px auto 0;
+      opacity: 0.4;
+    }
+
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 48px;
+      background: linear-gradient(to bottom, rgba(26,20,16,0.95), transparent);
+    }
+
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 18px;
+      letter-spacing: 1px;
+      color: var(--cream);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 36px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--ash);
+      text-decoration: none;
+      font-size: 13px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--cream); }
+
+    section {
+      padding: 100px 24px;
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-size: 11px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(32px, 5vw, 52px);
+      font-weight: 400;
+      line-height: 1.15;
+      margin-bottom: 24px;
+    }
+
+    .section-body {
+      color: var(--ash);
+      font-size: 16px;
+      line-height: 1.8;
+      max-width: 560px;
+    }
+
+    .menu-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px;
+      margin-top: 60px;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    @media (max-width: 640px) {
+      .menu-grid { grid-template-columns: 1fr; }
+      nav { padding: 16px 20px; }
+      .nav-links { display: none; }
+    }
+
+    .menu-card {
+      padding: 36px;
+      background: var(--smoke);
+      border: 1px solid rgba(255,255,255,0.04);
+    }
+
+    .menu-card-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      margin-bottom: 20px;
+      color: var(--cream);
+    }
+
+    .menu-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      gap: 16px;
+    }
+
+    .menu-item:last-child { border-bottom: none; }
+
+    .menu-item-name {
+      font-size: 14px;
+      color: var(--ash);
+    }
+
+    .menu-item-price {
+      font-size: 13px;
+      color: var(--gold);
+      white-space: nowrap;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .info-row {
+      display: flex;
+      gap: 60px;
+      margin-top: 48px;
+      flex-wrap: wrap;
+    }
+
+    .info-block-label {
+      font-size: 11px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 8px;
+    }
+
+    .info-block-value {
+      font-size: 15px;
+      color: var(--ash);
+      line-height: 1.7;
+    }
+
+    .section-rule {
+      width: 100%;
+      height: 1px;
+      background: rgba(255,255,255,0.06);
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    footer {
+      text-align: center;
+      padding: 60px 24px;
+      color: var(--ash);
+      font-size: 13px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+
+    footer .footer-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 28px;
+      color: var(--cream);
+      margin-bottom: 16px;
+    }
+
+    .orbi-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 24px;
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.2);
+    }
+
+    .orbi-badge span { color: var(--gold); opacity: 0.6; }
+
+    .ember-bar {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--ember), var(--gold), var(--ember), transparent);
+      opacity: 0.6;
+    }
   </style>
 </head>
 <body>
-  <h1>Restaurante La Parrilla Don Carlos</h1>
-  <p>Bienvenidos a nuestro sitio web. Consultá a nuestro asistente virtual.</p>
-  <script>
-    window.ORBI_BUSINESS_ID = "demo";
-  </script>
-  <script src="orbi.js"></script>
+
+<nav>
+  <div class="nav-logo">Don Carlos</div>
+  <ul class="nav-links">
+    <li><a href="#menu">Menú</a></li>
+    <li><a href="#nosotros">Nosotros</a></li>
+    <li><a href="#reservas">Reservas</a></li>
+  </ul>
+</nav>
+
+<div class="hero">
+  <p class="hero-eyebrow">Desde 1987 · Buenos Aires</p>
+  <h1>La Parrilla<br><em>Don Carlos</em></h1>
+  <p class="hero-sub">Av. Corrientes 1847 · Abierto todos los días</p>
+  <div class="hero-divider"></div>
+  <div class="ember-bar"></div>
+</div>
+
+<section id="nosotros">
+  <p class="section-label">Nuestra historia</p>
+  <h2 class="section-title">El fuego<br>lo es todo.</h2>
+  <p class="section-body">Más de 35 años encendiendo la misma parrilla en el corazón de Buenos Aires. Don Carlos empezó como un sueño familiar y hoy es un punto de encuentro para quienes saben que una buena carne bien asada no necesita adornos.</p>
+</section>
+
+<div class="section-rule"></div>
+
+<section id="menu">
+  <p class="section-label">Nuestra carta</p>
+  <h2 class="section-title">Lo que<br>sale de la parrilla.</h2>
+
+  <div class="menu-grid">
+    <div class="menu-card">
+      <h3 class="menu-card-title">Entradas</h3>
+      <div class="menu-item"><span class="menu-item-name">Provoleta a la parrilla</span><span class="menu-item-price">$4.500</span></div>
+      <div class="menu-item"><span class="menu-item-name">Chorizo criollo (x2)</span><span class="menu-item-price">$3.800</span></div>
+      <div class="menu-item"><span class="menu-item-name">Morcilla artesanal (x2)</span><span class="menu-item-price">$3.500</span></div>
+      <div class="menu-item"><span class="menu-item-name">Tabla de embutidos</span><span class="menu-item-price">$7.200</span></div>
+      <div class="menu-item"><span class="menu-item-name">Empanadas de carne (x3)</span><span class="menu-item-price">$4.200</span></div>
+    </div>
+
+    <div class="menu-card">
+      <h3 class="menu-card-title">Carnes</h3>
+      <div class="menu-item"><span class="menu-item-name">Bife de chorizo 300g</span><span class="menu-item-price">$9.800</span></div>
+      <div class="menu-item"><span class="menu-item-name">Bife de chorizo 400g</span><span class="menu-item-price">$12.500</span></div>
+      <div class="menu-item"><span class="menu-item-name">Ojo de bife 300g</span><span class="menu-item-price">$11.200</span></div>
+      <div class="menu-item"><span class="menu-item-name">Entraña</span><span class="menu-item-price">$8.900</span></div>
+      <div class="menu-item"><span class="menu-item-name">Asado de tira</span><span class="menu-item-price">$8.500</span></div>
+      <div class="menu-item"><span class="menu-item-name">Tira completa (para 2)</span><span class="menu-item-price">$16.800</span></div>
+    </div>
+
+    <div class="menu-card">
+      <h3 class="menu-card-title">Postres</h3>
+      <div class="menu-item"><span class="menu-item-name">Flan casero con crema</span><span class="menu-item-price">$2.800</span></div>
+      <div class="menu-item"><span class="menu-item-name">Panqueques con dulce de leche</span><span class="menu-item-price">$3.200</span></div>
+      <div class="menu-item"><span class="menu-item-name">Helado artesanal (2 bochas)</span><span class="menu-item-price">$2.500</span></div>
+      <div class="menu-item"><span class="menu-item-name">Brownie con helado</span><span class="menu-item-price">$3.800</span></div>
+    </div>
+
+    <div class="menu-card">
+      <h3 class="menu-card-title">Bebidas</h3>
+      <div class="menu-item"><span class="menu-item-name">Cerveza artesanal 500ml</span><span class="menu-item-price">$3.200</span></div>
+      <div class="menu-item"><span class="menu-item-name">Vino de la casa (copa)</span><span class="menu-item-price">$2.800</span></div>
+      <div class="menu-item"><span class="menu-item-name">Malbec Rutini (botella)</span><span class="menu-item-price">$14.500</span></div>
+      <div class="menu-item"><span class="menu-item-name">Torrontés (botella)</span><span class="menu-item-price">$12.800</span></div>
+      <div class="menu-item"><span class="menu-item-name">Gaseosas</span><span class="menu-item-price">$1.500</span></div>
+    </div>
+  </div>
+</section>
+
+<div class="section-rule"></div>
+
+<section id="reservas">
+  <p class="section-label">Visitanos</p>
+  <h2 class="section-title">Siempre<br>hay lugar.</h2>
+  <p class="section-body">Para grupos de más de 8 personas reservá con 24hs de anticipación. Los domingos a la noche solo abrimos con reserva previa.</p>
+
+  <div class="info-row">
+    <div class="info-block">
+      <p class="info-block-label">Dirección</p>
+      <p class="info-block-value">Av. Corrientes 1847<br>Buenos Aires</p>
+    </div>
+    <div class="info-block">
+      <p class="info-block-label">Horarios</p>
+      <p class="info-block-value">Lun–Vie: 12:00–15:30 y 20:00–00:00<br>Sáb: 12:00–16:00 y 20:00–01:00<br>Dom: 12:00–16:00</p>
+    </div>
+    <div class="info-block">
+      <p class="info-block-label">Reservas</p>
+      <p class="info-block-value">Tel / WhatsApp<br>+54 9 11 4372-8890</p>
+    </div>
+    <div class="info-block">
+      <p class="info-block-label">Menú del día</p>
+      <p class="info-block-value">Lun–Vie al mediodía<br>Entrada + principal + bebida<br>$8.500</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-logo">Don Carlos</div>
+  <p>Av. Corrientes 1847 · Buenos Aires · (011) 4372-8890</p>
+  <div class="orbi-badge">Asistente virtual por <span>Orbi ✦ Codexia</span></div>
+</footer>
+
+<script>
+  window.ORBI_BUSINESS_ID = "demo";
+</script>
+<script src="orbi.js"></script>
+
 </body>
 </html>
